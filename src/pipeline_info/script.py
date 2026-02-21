@@ -1,5 +1,6 @@
 import argparse
 from Bio import Entrez, SeqIO
+from src.logic import get_seq_from_id
 
 Entrez.mail = "tauzin_pierre@orange.fr"
 
@@ -7,14 +8,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--id")
 args = parser.parse_args()
 id_seq = args.id
-
-
-def get_seq_from_id(id_seq):
-    with Entrez.efetch(
-        db="nucleotide", id=id_seq, rettype="gb", retmode="text"
-    ) as handle:
-        return SeqIO.read(handle, "genbank")
-
 
 record = get_seq_from_id(id_seq)
 
