@@ -94,3 +94,25 @@ def draw_gc_skew(seq, window_size=500):
     plt.hline(0, color="green")
 
     plt.show()
+
+
+def draw_cumulated_skew(seq, window_size=500):
+    position = []
+    cumulated_skew_values = []
+
+    current_total = 0
+    for i in range(0, len(seq), window_size):
+        segment = seq[i : i + window_size]
+        score = get_skew_value(segment)
+
+        current_total += score or 0
+        cumulated_skew_values.append(current_total)
+        position.append(i)
+    plt.clf()
+    plt.plot(position, cumulated_skew_values, color="dark blue")
+
+    plt.title("Proportion de G par rapport au C cumulé (GC skew cumulated)")
+    plt.xlabel("Position sur le génome (bp)")
+    plt.ylabel("GC Skew cumulated")
+
+    plt.show()
