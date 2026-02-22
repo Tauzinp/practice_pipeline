@@ -1,9 +1,17 @@
 from Bio import Entrez, SeqIO
 import plotext as plt
+import os
+from dotenv import load_dotenv
+from Bio import Entrez, SeqIO
+
+load_dotenv()
 
 
 def get_seq_from_id(id_seq):
-    Entrez.mail = "tauzin_pierre@orange.fr"
+    Entrez.email = os.getenv("NCBI_EMAIL")
+
+    if not Entrez.email:
+        print("Attention : NCBI_EMAIL n'est pas défini dans le fichier .env")
 
     with Entrez.efetch(
         db="nucleotide", id=id_seq, rettype="gb", retmode="text"
@@ -45,5 +53,44 @@ def draw_gc_graph(seq, window_size=500):
 
     global_mid = get_gc_percent(seq)
     plt.hline(global_mid, color="red")
+
+    plt.show()
+
+
+def get_skew_value(seq):
+    seq = seq.upper()
+
+    if len(seq) == 0:
+        return print("Séquence vide")
+
+    nb_g = seq.count("G")
+    nb_c = seq.count("C")
+
+    gc_skew = (nb_g - nb_c) / (nb_g + nb_c)
+    return gc_skew
+
+
+def draw_gc_skew(seq, window_size=500):
+    position = []
+    skew_values = []
+
+    for i in range(0, len(seq), window_size):
+        segment = seq[i : i + window_size]
+
+        score = get_skew_value(segment)
+
+        skew_values.append(score)
+        position.append(i)
+
+    plt.clf()
+    plt.plot(position, skew_values, color="violet")
+
+    plt.title("Proportion de G par rapport au C (GC skew)")
+    plt.xlabel("Position sur le génome (bp)")
+    plt.ylabel("GC Skew")
+
+    global_mean = get_skew_value(seq)
+    plt.hline(global_mean, color="red")
+    plt.hline(0, color="green")
 
     plt.show()
