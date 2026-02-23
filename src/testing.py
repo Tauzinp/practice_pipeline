@@ -1,9 +1,13 @@
+import plotext as plt
 from Bio import Entrez, SeqIO
-from src.logic import draw_cumulated_skew, get_seq_from_id
+from src.logic import count_kmers, draw_cumulated_skew, get_seq_from_id
 from src.logic import draw_gc_graph
 from src.logic import get_skew_value
 from src.logic import draw_gc_skew
 from src.logic import draw_cumulated_skew
+from src.logic import count_kmers
+from src.logic import get_distribution_kmer
+from src.logic import draw_kmer_graph
 
 record = get_seq_from_id("NC_001416.1")
 
@@ -13,20 +17,6 @@ skew_graph = draw_gc_skew(record.seq)
 
 skew_graph_cumulated = draw_cumulated_skew(record.seq)
 
-
-def count_kmers(seq, k=4):
-    frequency = {}
-    for i in range(0, len(seq) - k + 1, k):
-        subseq = seq[i : i + k]
-
-        if subseq in frequency:
-            frequency[subseq] += 1
-
-        else:
-            frequency[subseq] = 1
-
-    return frequency
-
-
-test = count_kmers(record.seq, k=4)
-print(test)
+kmer_counts = count_kmers(record.seq)
+kmer_distribution = get_distribution_kmer(kmer_counts)
+kmer_graph = draw_kmer_graph(kmer_distribution)

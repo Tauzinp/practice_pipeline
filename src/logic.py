@@ -45,6 +45,8 @@ def draw_gc_graph(seq, window_size=500):
         position.append(i)
 
     plt.clf()
+    plt.theme("dark")
+
     plt.plot(position, gc_values, color="orange")
 
     plt.title("Variation du contenu en GC (Fenêtres de 500bp)")
@@ -83,6 +85,8 @@ def draw_gc_skew(seq, window_size=500):
         position.append(i)
 
     plt.clf()
+    plt.theme("dark")
+
     plt.plot(position, skew_values, color="violet")
 
     plt.title("Proportion de G par rapport au C (GC skew)")
@@ -109,10 +113,55 @@ def draw_cumulated_skew(seq, window_size=500):
         cumulated_skew_values.append(current_total)
         position.append(i)
     plt.clf()
+    plt.theme("dark")
+
     plt.plot(position, cumulated_skew_values, color="dark blue")
 
     plt.title("Proportion de G par rapport au C cumulé (GC skew cumulated)")
     plt.xlabel("Position sur le génome (bp)")
     plt.ylabel("GC Skew cumulated")
+
+    plt.show()
+
+
+def count_kmers(seq, k=4):
+    frequency = {}
+    for i in range(0, len(seq) - k + 1):
+        subseq = seq[i : i + k]
+
+        if subseq in frequency:
+            frequency[subseq] += 1
+
+        else:
+            frequency[subseq] = 1
+
+    return frequency
+
+
+def get_distribution_kmer(kmer_counts):
+    dist_dict = {}
+    for freq in kmer_counts.values():
+        if freq in dist_dict:
+            dist_dict[freq] += 1
+        else:
+            dist_dict[freq] = 1
+
+    sorted_frequencies = sorted(dist_dict.keys())
+
+    x = sorted_frequencies
+    y = [dist_dict[f] for f in sorted_frequencies]
+
+    return x, y
+
+
+def draw_kmer_graph(kmer_frequency):
+    plt.clf()
+
+    plt.plot(kmer_frequency[0], kmer_frequency[1], color="cyan", label="Distribution")
+    plt.theme("dark")
+
+    plt.title("Spectre des k-mers (Phage Lambda)")
+    plt.xlabel("Fréquence (Abondance)")
+    plt.ylabel("Nombre de k-mers distincts")
 
     plt.show()
