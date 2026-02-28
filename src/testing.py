@@ -8,6 +8,7 @@ from src.logic import draw_cumulated_skew
 from src.logic import count_kmers
 from src.logic import get_distribution_kmer
 from src.logic import draw_kmer_graph
+from src.logic_poo import GCAnalyser
 
 record = get_seq_from_id("NC_001416.1")
 
@@ -20,3 +21,9 @@ skew_graph_cumulated = draw_cumulated_skew(record.seq)
 kmer_counts = count_kmers(record.seq)
 kmer_distribution = get_distribution_kmer(kmer_counts)
 kmer_graph = draw_kmer_graph(kmer_distribution)
+
+
+### TEST POO
+
+gc_percent = record.seq.gc_percent()
+print(gc_percent)
