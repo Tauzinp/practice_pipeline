@@ -1,8 +1,5 @@
-from os import name
-
-
 class dog:
-    def __init__(self, name, age) -> None:
+    def __init__(self, name, age):
         self.name = name
         self.age = age
 
@@ -10,30 +7,30 @@ class dog:
         print("bark bark")
 
     def doginfo(self):
-        print(self.name + " is " + str(self.age) + " years")
+        print(self.name + " is " + str(self.age) + " years old")
 
     def birthday(self):
         self.age += 1
 
+    def setBuddy(self, buddy):
+        self.buddy = buddy
+        buddy.buddy = self
 
-jina = dog("jina", 10)
-print(jina.age)
-print(jina.name)
+
+jina = dog("Jina", 10)
 jina.name
-
 jina.doginfo()
 
-filou = dog("Filou", 2)
-veve = dog("Veve", 3)
-
-filou.doginfo()
+veve = dog("Vévé", 2)
+veve.age
+veve.doginfo()
+veve.birthday()
 veve.doginfo()
 
-jina.age = 11
-
-jina.doginfo()
-
+jina.setBuddy(veve)
+jina.buddy.name
+veve.buddy.name
 jina.birthday()
-jina.doginfo()
-jina.birthday()
-jina.doginfo()
+veve.buddy.age
+
+veve.buddy.doginfo()
