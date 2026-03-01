@@ -1,6 +1,3 @@
-import plotext as plt
-
-
 class GCAnalyser:
     def __init__(self, seq):
         self.seq = seq
@@ -34,10 +31,10 @@ class GCAnalyser:
         self.gc_values = gc_values
         self.position = position
 
-    def draw_gc(self, width, height):
+    def draw_gc(self, plt):
         plt.clf()
         plt.theme("dark")
-        plt.plotsize(width, height)
+
         plt.plot(self.position, self.gc_values)
 
         plt.title("Variation")

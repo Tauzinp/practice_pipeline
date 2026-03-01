@@ -1,5 +1,6 @@
 from textual.app import App
 from textual.widgets import Header, Footer, Label, Static, Button, Input
+from textual_plotext import PlotextPlot
 
 import plotext as plt
 
@@ -10,18 +11,18 @@ from src.logic_poo import GCAnalyser
 class MonApp(App):
     BINDINGS = [("q", "quit", "Quitter")]
     CSS = """
-    #static_action {
-        margin: 1 0;
-        padding: 1;
-        border: solid green;
+    #static_descritpion, #static_seq {
+        height: auto;
+        margin: 0 1;
     }
 
-    /* On donne une vraie taille à la zone du graphique */
+    /* Le graphique prend tout l'espace disponible (1fr) */
     #static_gc_graph {
-        height: 20;           /* 20 lignes de haut */
-        width: 100%;          /* Toute la largeur */
-        border: tall grey;    /* Une bordure pour bien voir la zone */
+        height: 1fr; 
+        min-height: 20;
+        border: tall grey;
         background: black;
+        margin: 1;
     }
     """
 
@@ -32,7 +33,7 @@ class MonApp(App):
         yield Static("Résultats", id="static_descritpion")
         yield Static("Séquence", id="static_seq")
         yield Button("Tracer le Graphique des GC", id="btn_graph", variant="success")
-        yield Static("GC Graph", id="static_gc_graph")
+        yield PlotextPlot(id="static_gc_graph")
         yield Footer()
 
     def on_button_pressed(self, event):
@@ -61,24 +62,22 @@ class MonApp(App):
             display_zone_description.update(f"Erreur : {e}")
 
     def gerer_graphique(self):
-        display_zone_gc_graph = self.query_one("#static_gc_graph")
+        graph_widget = self.query_one("#static_gc_graph", PlotextPlot)
 
         if hasattr(self, "record"):
             try:
-                largeur = display_zone_gc_graph.content_size.width
-                hauteur = display_zone_gc_graph.content_size.height
+                plt = graph_widget.plt
 
                 analyser = GCAnalyser(str(self.record.seq))
                 analyser.segment_values()
 
-                analyser.draw_gc(width=largeur, height=hauteur - 2)
-                graph_text = plt.build()
-                display_zone_gc_graph.update(graph_text)
+                analyser.draw_gc(plt)
+                graph_widget.refresh()
 
             except Exception as e:
-                display_zone_gc_graph.update(f"Erreur : {e}")
+                self.notify(f"Erreur : {e}", severity="error")
         else:
-            display_zone_gc_graph.update("Importez une séquence d'abord !")
+            self.notify("Importez une séquence d'abord !", severity="warning")
 
 
 if __name__ == "__main__":

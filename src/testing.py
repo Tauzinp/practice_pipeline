@@ -25,5 +25,8 @@ kmer_graph = draw_kmer_graph(kmer_distribution)
 
 ### TEST POO
 
-gc_percent = record.seq.gc_percent()
-print(gc_percent)
+analyser = GCAnalyser(record.seq)
+gc = analyser.get_percent()
+print(gc)
+
+gc_graph_poo = analyser.draw_gc()
