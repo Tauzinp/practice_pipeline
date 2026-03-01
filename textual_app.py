@@ -5,7 +5,7 @@ from textual_plotext import PlotextPlot
 import plotext as plt
 
 from src.logic import get_seq_from_id
-from src.logic_poo import GCAnalyser
+from src.logic_poo import GCAnalyser, gcSkewAnalyser
 
 
 class MonApp(App):
@@ -17,9 +17,9 @@ class MonApp(App):
     }
 
     /* Le graphique prend tout l'espace disponible (1fr) */
-    #static_gc_graph {
+    #static_gc_graph, #static_skew_gc_graph {
         height: 1fr; 
-        min-height: 20;
+        min-height: 40;
         border: tall grey;
         background: black;
         margin: 1;
@@ -32,8 +32,9 @@ class MonApp(App):
         yield Button("Importer la séquence", id="btn_import", variant="success")
         yield Static("Résultats", id="static_descritpion")
         yield Static("Séquence", id="static_seq")
-        yield Button("Tracer le Graphique des GC", id="btn_graph", variant="success")
+        yield Button("Tracer les Graphiques", id="btn_graph", variant="success")
         yield PlotextPlot(id="static_gc_graph")
+        yield PlotextPlot(id="static_skew_gc_graph")
         yield Footer()
 
     def on_button_pressed(self, event):
@@ -62,17 +63,24 @@ class MonApp(App):
             display_zone_description.update(f"Erreur : {e}")
 
     def gerer_graphique(self):
-        graph_widget = self.query_one("#static_gc_graph", PlotextPlot)
+        gc_graph_widget = self.query_one("#static_gc_graph", PlotextPlot)
+        skew_graph_widget = self.query_one("#static_skew_gc_graph", PlotextPlot)
 
         if hasattr(self, "record"):
             try:
-                plt = graph_widget.plt
+                plt_gc = gc_graph_widget.plt
+                plt_skew = skew_graph_widget.plt
 
-                analyser = GCAnalyser(str(self.record.seq))
-                analyser.segment_values()
+                GCanalyser = GCAnalyser(str(self.record.seq))
+                GCanalyser.segment_values()
+                GCanalyser.draw_gc(plt_gc)
 
-                analyser.draw_gc(plt)
-                graph_widget.refresh()
+                SKEWanalyser = gcSkewAnalyser(str(self.record.seq))
+                SKEWanalyser.segment_values()
+                SKEWanalyser.draw_gc_skew(plt_skew)
+
+                gc_graph_widget.refresh()
+                skew_graph_widget.refresh()
 
             except Exception as e:
                 self.notify(f"Erreur : {e}", severity="error")

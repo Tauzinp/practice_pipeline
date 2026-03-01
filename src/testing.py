@@ -21,12 +21,3 @@ skew_graph_cumulated = draw_cumulated_skew(record.seq)
 kmer_counts = count_kmers(record.seq)
 kmer_distribution = get_distribution_kmer(kmer_counts)
 kmer_graph = draw_kmer_graph(kmer_distribution)
-
-
-### TEST POO
-
-analyser = GCAnalyser(record.seq)
-gc = analyser.get_percent()
-print(gc)
-
-gc_graph_poo = analyser.draw_gc()
