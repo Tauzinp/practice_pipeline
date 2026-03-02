@@ -1,11 +1,11 @@
-from textual.app import App
-from textual.widgets import Header, Footer, Label, Static, Button, Input
-from textual_plotext import PlotextPlot
+from textual.app import App  # type: ignore
+from textual.widgets import Header, Footer, Static, Button, Input  # type: ignore
 
-import plotext as plt
+from textual_plotext import PlotextPlot  # type: ignore
+
 
 from src.logic import get_seq_from_id
-from src.logic_poo import GCAnalyser, gcSkewAnalyser
+from src.logic_poo import GCAnalyser, KMERAnalyser, gcSkewAnalyser
 
 
 class MonApp(App):
@@ -17,7 +17,7 @@ class MonApp(App):
     }
 
     /* Le graphique prend tout l'espace disponible (1fr) */
-    #static_gc_graph, #static_skew_gc_graph {
+    #static_gc_graph, #static_skew_gc_graph, #static_kmer_graph {
         height: 1fr; 
         min-height: 40;
         border: tall grey;
@@ -35,6 +35,7 @@ class MonApp(App):
         yield Button("Tracer les Graphiques", id="btn_graph", variant="success")
         yield PlotextPlot(id="static_gc_graph")
         yield PlotextPlot(id="static_skew_gc_graph")
+        yield PlotextPlot(id="static_kmer_graph")
         yield Footer()
 
     def on_button_pressed(self, event):
@@ -65,11 +66,13 @@ class MonApp(App):
     def gerer_graphique(self):
         gc_graph_widget = self.query_one("#static_gc_graph", PlotextPlot)
         skew_graph_widget = self.query_one("#static_skew_gc_graph", PlotextPlot)
+        kmer_graph_widget = self.query_one("#static_kmer_graph", PlotextPlot)
 
         if hasattr(self, "record"):
             try:
                 plt_gc = gc_graph_widget.plt
                 plt_skew = skew_graph_widget.plt
+                plt_kmer = kmer_graph_widget.plt
 
                 GCanalyser = GCAnalyser(str(self.record.seq))
                 GCanalyser.segment_values()
@@ -79,8 +82,14 @@ class MonApp(App):
                 SKEWanalyser.segment_values()
                 SKEWanalyser.draw_gc_skew(plt_skew)
 
+                KMERanalyser = KMERAnalyser(str(self.record.seq))
+                frequency = KMERanalyser.count_kmer()
+                kmer_frequency = KMERanalyser.get_distribution(frequency)
+                kmer_graph = KMERanalyser.draw_kmer(kmer_frequency, plt_kmer)  # type: ignore
+
                 gc_graph_widget.refresh()
                 skew_graph_widget.refresh()
+                kmer_graph_widget.refresh()
 
             except Exception as e:
                 self.notify(f"Erreur : {e}", severity="error")

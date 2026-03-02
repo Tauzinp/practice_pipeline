@@ -89,3 +89,44 @@ class gcSkewAnalyser:
         plt.title("GC Skew en cumulé")
         plt.xlabel("Position sur le génome (bp)")
         plt.ylabel("Proportion")
+
+
+class KMERAnalyser:
+    def __init__(self, seq):
+        self.seq = seq
+
+    def count_kmer(self, k=4):
+        frequency = {}
+        for i in range(0, len(self.seq) - k + 1):
+            subseq = self.seq[i : i + k]
+            if subseq in frequency:
+                frequency[subseq] += 1
+            else:
+                frequency[subseq] = 1
+
+        return frequency
+
+    def get_distribution(self, frequency):
+        dist_dict = {}
+        for freq in frequency.values():
+            if freq in dist_dict:
+                dist_dict[freq] += 1
+            else:
+                dist_dict[freq] = 1
+
+        sorted_values = sorted(dist_dict.keys())
+
+        x = sorted_values
+        y = [dist_dict[f] for f in sorted_values]
+
+        return x, y
+
+    def draw_kmer(self, kmer_frequency, plt):
+        plt.clf()
+        plt.plot(kmer_frequency[0], kmer_frequency[1], color="blue")
+
+        plt.theme("dark")
+
+        plt.title("Spectre des k-mers (Phage Lambda)")
+        plt.xlabel("Fréquence (Abondance)")
+        plt.ylabel("Nombre de k-mers distincts")
