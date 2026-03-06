@@ -1,0 +1,7 @@
+grille = [[0, 0], [0, 0]]
+users = [
+    {"name": "Alice", "age": 25},
+    {"name": "Bob", "age": 17},
+    {"name": "Charlie", "age": 30},
+    {"name": "David", "age": 15},
+]
