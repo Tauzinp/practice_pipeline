@@ -1,0 +1,1 @@
+from tp_egene.logic import seq_reverser_transcripter
